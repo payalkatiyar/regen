@@ -193,6 +193,6 @@ if predict_clicked:
 # ---------------- FOOTER ----------------
 st.markdown("""
 <footer>
-    Built by Charvi Sharma, Payal Katiyar, Rishika Raj and Rudranil Saha | SRM Institute of Science & Technology
+    Built by Payal Katiyar, Charvi Sharma, Rishika Raj and Rudranil Saha | SRM Institute of Science & Technology
 </footer>
 """, unsafe_allow_html=True)
