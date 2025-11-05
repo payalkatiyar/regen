@@ -126,32 +126,32 @@ st.subheader("🌤️ Environmental Inputs")
 
 col1, col2 = st.columns(2)
 with col1:
-    temperature = st.number_input("🌡️ Temperature (°C)", value=25.0)
-    humidity = st.number_input("💧 Relative Humidity (%)", value=60.0)
-    pressure = st.number_input("🎈 Mean Sea Level Pressure (hPa)", value=1013.0)
-    precipitation = st.number_input("🌧️ Total Precipitation (mm)", value=0.0)
-    snowfall = st.number_input("❄️ Snowfall Amount (mm)", value=0.0)
-    cloud_cover = st.number_input("☁️ Total Cloud Cover (%)", value=40.0)
+    temperature = st.number_input("🌡️ Air Temperature (°C — how warm the air is)", value=25.0)
+    humidity = st.number_input("💧 Humidity (% — moisture in the air)", value=60.0)
+    pressure = st.number_input("🎈 Air Pressure (hPa — atmospheric pressure at sea level)", value=1013.0)
+    precipitation = st.number_input("🌧️ Rainfall (mm — total precipitation)", value=0.0)
+    snowfall = st.number_input("❄️ Snowfall (mm — snow precipitation)", value=0.0)
+    cloud_cover = st.number_input("☁️ Total Cloud Cover (% — overall sky cloudiness)", value=40.0)
 
 with col2:
-    wind_speed_10 = st.number_input("🌬️ Wind Speed (10m, m/s)", value=5.0)
-    wind_dir_10 = st.number_input("🧭 Wind Direction (10m, °)", value=180.0)
-    wind_speed_80 = st.number_input("🌪️ Wind Speed (80m, m/s)", value=7.0)
-    wind_dir_80 = st.number_input("🧭 Wind Direction (80m, °)", value=200.0)
-    shortwave_rad = st.number_input("🔆 Shortwave Radiation (W/m²)", value=250.0)
-    angle_incidence = st.number_input("📐 Angle of Incidence (°)", value=30.0)
+    wind_speed_10 = st.number_input("🌬️ Wind Speed Near Ground (m/s — measured 10m above ground)", value=5.0)
+    wind_dir_10 = st.number_input("🧭 Wind Direction Near Ground (° — direction from which wind blows)", value=180.0)
+    wind_speed_80 = st.number_input("🌪️ Wind Speed at Turbine Height (m/s — measured 80m above ground)", value=7.0)
+    wind_dir_80 = st.number_input("🧭 Wind Direction at Turbine Height (° — for 80m)", value=200.0)
+    shortwave_rad = st.number_input("🔆 Sunlight Intensity (W/m² — solar radiation reaching ground)", value=250.0)
+    angle_incidence = st.number_input("📐 Sunlight Angle (° — angle of sunlight hitting panels)", value=30.0)
 
 # ---------------- ADVANCED INPUTS ----------------
 with st.expander("⚙️ Advanced Atmospheric Parameters (Optional)"):
-    st.markdown("_You can skip this section; defaults will use typical clear-day averages._")
-    high_cloud = st.number_input("High Cloud Cover (%)", value=20.0)
-    medium_cloud = st.number_input("Medium Cloud Cover (%)", value=15.0)
-    low_cloud = st.number_input("Low Cloud Cover (%)", value=10.0)
-    wind_speed_900 = st.number_input("Wind Speed (900mb, m/s)", value=6.0)
-    wind_dir_900 = st.number_input("Wind Direction (900mb, °)", value=250.0)
-    wind_gust_10 = st.number_input("Wind Gust (10m, m/s)", value=15.0)
-    zenith = st.number_input("Solar Zenith Angle (°)", value=45.0)
-    azimuth = st.number_input("Solar Azimuth Angle (°)", value=120.0)
+    st.markdown("_You can skip this section; default averages will be used if not adjusted._")
+    high_cloud = st.number_input("High-Level Clouds (% — upper sky layer)", value=20.0)
+    medium_cloud = st.number_input("Mid-Level Clouds (% — middle layer of sky)", value=15.0)
+    low_cloud = st.number_input("Low-Level Clouds (% — near-ground clouds)", value=10.0)
+    wind_speed_900 = st.number_input("Wind Speed (m/s — around 100m above ground)", value=6.0)
+    wind_dir_900 = st.number_input("Wind Direction (° — at 900mb pressure level)", value=250.0)
+    wind_gust_10 = st.number_input("Wind Gusts (m/s — short bursts of strong wind)", value=15.0)
+    zenith = st.number_input("Sun Position: Zenith (° — angle between sun and vertical line)", value=45.0)
+    azimuth = st.number_input("Sun Position: Azimuth (° — direction of sun across horizon)", value=120.0)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
@@ -164,7 +164,6 @@ st.markdown('</div>', unsafe_allow_html=True)
 # ---------------- PREDICTION ----------------
 if predict_clicked:
     if model is not None:
-        # Construct feature vector
         input_data = pd.DataFrame([[
             temperature, humidity, pressure, precipitation, snowfall, cloud_cover,
             high_cloud, medium_cloud, low_cloud, shortwave_rad,
