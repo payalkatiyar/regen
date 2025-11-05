@@ -12,19 +12,15 @@ st.set_page_config(
 # ---------------- DARK FUTURISTIC THEME ----------------
 st.markdown("""
     <style>
-        /* Global Layout */
         body {
             background: radial-gradient(circle at top left, #050d1a, #000000);
             color: #d4d8e0;
             font-family: 'Poppins', sans-serif;
         }
-
         .block-container {
             padding-top: 2rem !important;
             padding-bottom: 2rem !important;
         }
-
-        /* Hero Section */
         .hero {
             text-align: center;
             padding: 4rem 2rem;
@@ -46,8 +42,6 @@ st.markdown("""
             font-size: 1.2rem;
             color: #b0b7c3;
         }
-
-        /* Input Card */
         .card {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -60,21 +54,15 @@ st.markdown("""
         .card:hover {
             box-shadow: 0 0 40px rgba(79, 110, 245, 0.3);
         }
-
-        /* Headers */
         h2, h3 {
             color: #e6e9f0 !important;
         }
-
-        /* Inputs */
         .stNumberInput input {
             background-color: rgba(255, 255, 255, 0.05) !important;
             color: #f0f4ff !important;
             border-radius: 0.5rem !important;
             border: 1px solid rgba(255, 255, 255, 0.15) !important;
         }
-
-        /* Buttons */
         div.stButton > button:first-child {
             background: linear-gradient(90deg, #4c6ef5, #15aabf);
             color: white;
@@ -88,8 +76,6 @@ st.markdown("""
             box-shadow: 0 0 20px rgba(76,110,245,0.5);
             transform: scale(1.03);
         }
-
-        /* Result Box */
         .result-box {
             text-align: center;
             background: rgba(76, 110, 245, 0.08);
@@ -104,8 +90,6 @@ st.markdown("""
             color: #50b7f5;
             font-weight: 700;
         }
-
-        /* Footer */
         footer {
             text-align: center;
             color: #7a8399;
@@ -136,47 +120,65 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# ---------------- INPUT FORM (INSIDE CARD) ----------------
+# ---------------- INPUT FORM ----------------
 st.markdown('<div class="card">', unsafe_allow_html=True)
 st.subheader("🌤️ Environmental Inputs")
 
 col1, col2 = st.columns(2)
 with col1:
     temperature = st.number_input("🌡️ Temperature (°C)", value=25.0)
-    humidity = st.number_input("💧 Humidity (%)", value=60.0)
-    pressure = st.number_input("🎈 Pressure (hPa)", value=1013.0)
-    precipitation = st.number_input("🌧️ Precipitation (mm)", value=0.0)
-    cloud_cover = st.number_input("☁️ Cloud Cover (%)", value=40.0)
+    humidity = st.number_input("💧 Relative Humidity (%)", value=60.0)
+    pressure = st.number_input("🎈 Mean Sea Level Pressure (hPa)", value=1013.0)
+    precipitation = st.number_input("🌧️ Total Precipitation (mm)", value=0.0)
+    snowfall = st.number_input("❄️ Snowfall Amount (mm)", value=0.0)
+    cloud_cover = st.number_input("☁️ Total Cloud Cover (%)", value=40.0)
 
 with col2:
     wind_speed_10 = st.number_input("🌬️ Wind Speed (10m, m/s)", value=5.0)
-    wind_dir_10 = st.number_input("🧭 Wind Direction (°)", value=180.0)
+    wind_dir_10 = st.number_input("🧭 Wind Direction (10m, °)", value=180.0)
     wind_speed_80 = st.number_input("🌪️ Wind Speed (80m, m/s)", value=7.0)
-    shortwave_rad = st.number_input("🔆 Shortwave Radiation (W/m²)", value=200.0)
+    wind_dir_80 = st.number_input("🧭 Wind Direction (80m, °)", value=200.0)
+    shortwave_rad = st.number_input("🔆 Shortwave Radiation (W/m²)", value=250.0)
     angle_incidence = st.number_input("📐 Angle of Incidence (°)", value=30.0)
+
+# ---------------- ADVANCED INPUTS ----------------
+with st.expander("⚙️ Advanced Atmospheric Parameters (Optional)"):
+    st.markdown("_You can skip this section; defaults will use typical clear-day averages._")
+    high_cloud = st.number_input("High Cloud Cover (%)", value=20.0)
+    medium_cloud = st.number_input("Medium Cloud Cover (%)", value=15.0)
+    low_cloud = st.number_input("Low Cloud Cover (%)", value=10.0)
+    wind_speed_900 = st.number_input("Wind Speed (900mb, m/s)", value=6.0)
+    wind_dir_900 = st.number_input("Wind Direction (900mb, °)", value=250.0)
+    wind_gust_10 = st.number_input("Wind Gust (10m, m/s)", value=15.0)
+    zenith = st.number_input("Solar Zenith Angle (°)", value=45.0)
+    azimuth = st.number_input("Solar Azimuth Angle (°)", value=120.0)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# Centered Predict Button
+# ---------------- PREDICT BUTTON ----------------
 st.markdown("<div style='text-align:center;'>", unsafe_allow_html=True)
 predict_clicked = st.button("🔮 Predict Energy Output")
 st.markdown("</div>", unsafe_allow_html=True)
-st.markdown('</div>', unsafe_allow_html=True)  # closes card
+st.markdown('</div>', unsafe_allow_html=True)
 
 # ---------------- PREDICTION ----------------
 if predict_clicked:
     if model is not None:
+        # Construct feature vector
         input_data = pd.DataFrame([[
-            temperature, humidity, pressure, precipitation, 0.0, cloud_cover,
-            30.0, 20.0, 10.0, shortwave_rad, wind_speed_10, wind_dir_10,
-            wind_speed_80, 200.0, 6.0, 250.0, 15.0, angle_incidence, 45.0, 120.0
+            temperature, humidity, pressure, precipitation, snowfall, cloud_cover,
+            high_cloud, medium_cloud, low_cloud, shortwave_rad,
+            wind_speed_10, wind_dir_10, wind_speed_80, wind_dir_80,
+            wind_speed_900, wind_dir_900, wind_gust_10,
+            angle_incidence, zenith, azimuth
         ]], columns=[
             'temperature_2_m_above_gnd', 'relative_humidity_2_m_above_gnd', 'mean_sea_level_pressure_MSL',
             'total_precipitation_sfc', 'snowfall_amount_sfc', 'total_cloud_cover_sfc',
             'high_cloud_cover_high_cld_lay', 'medium_cloud_cover_mid_cld_lay', 'low_cloud_cover_low_cld_lay',
             'shortwave_radiation_backwards_sfc', 'wind_speed_10_m_above_gnd', 'wind_direction_10_m_above_gnd',
-            'wind_speed_80_m_above_gnd', 'wind_direction_80_m_above_gnd', 'wind_speed_900_mb',
-            'wind_direction_900_mb', 'wind_gust_10_m_above_gnd', 'angle_of_incidence', 'zenith', 'azimuth'
+            'wind_speed_80_m_above_gnd', 'wind_direction_80_m_above_gnd',
+            'wind_speed_900_mb', 'wind_direction_900_mb', 'wind_gust_10_m_above_gnd',
+            'angle_of_incidence', 'zenith', 'azimuth'
         ])
 
         prediction = model.predict(input_data)[0]
