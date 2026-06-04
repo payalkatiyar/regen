@@ -26,4 +26,4 @@ jobs:
         playwright install chromium
 
     - name: Run Wake Up Script
-      run: python ping_app.py
+      run: python pingapp.py
