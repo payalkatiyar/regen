@@ -2,13 +2,15 @@ name: Keep Streamlit App Awake
 
 on:
   schedule:
-    # Runs every 4 hours (adjust cron if you want it more/less frequent)
     - cron: '0 */4 * * *'
-  workflow_dispatch: # Allows you to manually run it anytime from GitHub to test
+  workflow_dispatch:
 
 jobs:
   ping:
     runs-on: ubuntu-latest
+    # FORCE NODE 24 TO FIX THE WARNING:
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
     - name: Checkout Code
